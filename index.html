@@ -89,18 +89,24 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
+            // Display a message to the user when the installation prompt is available
             installMessage.textContent = "اضغط على الزر لتثبيت التطبيق على جهازك.";
             installMessage.className = 'mt-4 text-center text-gray-300';
         });
 
         // Event listener for the "Install" button click
         installBtn.addEventListener('click', () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-            } else if (window.matchMedia('(display-mode: standalone)').matches) {
-                installMessage.textContent = "التطبيق مثبت بالفعل على جهازك.";
+            // Check if the app is already installed (running in standalone mode)
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                installMessage.textContent = "التطبيق مثبت على هاتفك.";
                 installMessage.className = 'mt-4 text-center text-accent-green';
-            } else {
+            }
+            // Check if the installation prompt is available
+            else if (deferredPrompt) {
+                deferredPrompt.prompt();
+            } 
+            // If the prompt is not available and the app is not installed, the browser doesn't support PWA installation
+            else {
                 installMessage.textContent = "متصفحك لا يدعم تثبيت التطبيقات. استخدم متصفح Chrome أو Firefox.";
                 installMessage.className = 'mt-4 text-center text-red-500';
             }
