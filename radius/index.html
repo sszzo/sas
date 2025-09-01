@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>لوحة تحكم المشتركين</title>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+  <div id="toast-container"></div>
+  <div id="login-page" class="container">
+    <h2>تسجيل الدخول</h2>
+    <div id="login-error-message" class="error-message"></div>
+    
+    <div class="custom-sas-container">
+        <label class="custom-sas-checkbox">
+            <input type="checkbox" id="useCustomSas">
+            نور البداية
+        </label>
+    </div>
+
+    <div id="regularSasLinkContainer">
+        <label for="sasLink">رابط الساس:</label>
+        <div class="link-input-container">
+            <input type="text" id="sasLink" placeholder="رابط الساس...">
+            <select id="savedLinksSelect"></select>
+        </div>
+    
+        <div class="link-actions">
+            <button id="saveLinkBtn" class="link-btn"><i class="fas fa-save"></i> حفظ</button>
+            <button id="deleteLinkBtn" class="link-btn"><i class="fas fa-trash"></i> حذف</button>
+        </div>
+    </div>
+    
+    <label for="username">اسم المستخدم:</label>
+    <input type="text" id="username" placeholder="أدخل اسم المستخدم">
+    
+    <label for="password">كلمة المرور:</label>
+    <input type="password" id="password" placeholder="أدخل كلمة المرور">
+    
+    <button id="loginBtn" class="btn-primary">
+        <span class="btn-text">تسجيل الدخول</span>
+        <i class="fas fa-spinner fa-spin d-none"></i>
+    </button>
+    <button id="back-btn" style="display: none;" class="btn-secondary">
+        <i class="fas fa-arrow-right"></i> العودة الى صفحة اختيار الشركة
+    </button>
+  </div>
+  
+  <div id="main-content" class="d-none">
+    <div class="header">
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="theme-btn"><i class="fas fa-moon"></i></button>
+        <button id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
+    </div>
+    <div class="tab-buttons">
+      <button id="subscription-tab-btn" class="active-tab">الاشتراك</button>
+      <button id="payment-tab-btn">التسديد</button>
+    </div>
+
+    <div id="subscription-section" class="container">
+      <div id="subscription-loader" class="loader-container d-none"><div class="loader"></div></div>
+      <label for="search-input">بحث بالاسم:</label>
+      <input type="text" id="search-input" placeholder="ابحث عن اسم المشترك...">
+      <div id="search-results" class="search-results-container"></div>
+
+      <label for="subscriptionAmount">سعر الاشتراك:</label>
+      <select id="subscriptionAmount">
+          <option value="30">30</option>
+          <option value="35">35</option>
+          <option value="40">40</option>
+          <option value="45">45</option>
+          <option value="50">50</option>
+          <option value="55">55</option>
+          <option value="60">60</option>
+          <option value="65">65</option>
+          <option value="70">70</option>
+          <option value="75">75</option>
+          <option value="80">80</option>
+          <option value="85">85</option>
+          <option value="90">90</option>
+          <option value="95">95</option>
+          <option value="100">100</option>
+          <option value="120">120</option>
+      </select>
+      
+      <label for="debt">الدين المتراكم: <span class="label-note">(اختياري)</span></label>
+      <input type="number" id="debt" placeholder="أدخل الدين المتراكم">
+      
+      <button id="displayBtn" class="btn-primary" disabled>
+        <span class="btn-text">عرض البطاقة</span>
+      </button>
+
+      <div class="card result-card d-none" id="resultCard">
+        <h3>معلومات الاشتراك</h3>
+        <div class="card-item"><div class="label"><i class="fas fa-user"></i> الاسم:</div><p id="resName"></p></div>
+        <div class="card-item"><div class="label"><i class="fas fa-info-circle"></i> اسم الباقة:</div><p id="resAccountName"></p></div>
+        <div class="card-item"><div class="label"><i class="fas fa-calendar-check"></i> تاريخ التفعيل:</div><p id="resStart"></p></div>
+        <div class="card-item"><div class="label"><i class="fas fa-calendar-times"></i> تاريخ الانتهاء:</div><p id="resEnd"></p></div>
+        <div class="card-item"><div class="label"><i class="fas fa-clock"></i> وقت الانتهاء:</div><p id="resEndTime"></p></div>
+        <div class="card-item"><div class="label"><i class="fas fa-money-bill-wave"></i> سعر الاشتراك:</div><p id="resSubscriptionAmount"></p></div>
+        <div class="card-item debt-item"><div class="label"><i class="fas fa-exclamation-triangle"></i> الدين المتراكم:</div><p id="resDebt"></p></div>
+        <p class="note">ملاحظة: مدة الاشتراك 30 يوم، في حالة صادف الشهر 31 يومًا سوف يُخصم يوم من اشتراكك.</p>
+      </div>
+      <div class="single-button-container d-none" id="save-card-btn-container">
+        <button class="btn-secondary" onclick="saveCardAsImage()"><i class="fas fa-download"></i> حفظ البطاقة كصورة</button>
+      </div>
+    </div>
+    
+    <div id="payment-section" class="container d-none">
+      <div id="payment-loader" class="loader-container d-none"><div class="loader"></div></div>
+        <label for="payment-search-input">بحث بالاسم:</label>
+        <input type="text" id="payment-search-input" placeholder="ابحث عن اسم المشترك...">
+        <div id="payment-search-results" class="search-results-container"></div>
+
+        <label>تاريخ التسديد:</label>
+        <div class="date-inputs">
+            <input type="number" id="paymentDayInput" placeholder="اليوم">
+            <input type="number" id="paymentMonthInput" placeholder="الشهر">
+        </div>
+        
+        <label for="paidAmountInput">المبلغ المسدد:</label>
+        <input type="number" id="paidAmountInput" placeholder="أدخل المبلغ">
+        
+        <label for="remainingDebtInput">الدين المتبقي:</label>
+        <input type="number" id="remainingDebtInput" placeholder="اتركه فارغاً إذا لا يوجد دين">
+        
+        <button id="displayPaymentBtn" class="btn-primary" disabled>
+            <span class="btn-text">عرض البطاقة</span>
+        </button>
+
+        <div class="card payment-result-card d-none" id="paymentCard">
+            <h3>تم التسديد بنجاح</h3>
+            <div class="payment-card-item"><div class="label"><i class="fas fa-user"></i> الاسم:</div><p id="paymentResName"></p></div>
+            <div class="payment-card-item"><div class="label"><i class="fas fa-calendar-alt"></i> تاريخ التسديد:</div><p id="paymentResDate"></p></div>
+            <div class="payment-card-item"><div class="label"><i class="fas fa-money-bill-wave"></i> المبلغ المسدد:</div><p id="paymentResAmount"></p></div>
+            <div class="payment-card-item debt-item"><div class="label"><i class="fas fa-exclamation-triangle"></i> الدين المتبقي:</div><p id="paymentResDebt"></p></div>
+        </div>
+        <div class="single-button-container d-none" id="save-payment-card-btn-container">
+            <button class="btn-secondary" onclick="savePaymentCardAsImage()"><i class="fas fa-download"></i> حفظ البطاقة كصورة</button>
+        </div>
+    </div>
+  
+  </div>
+  
+
+
+  <script src="1.js"></script>
+  <script src="2.js"></script>
+</body>
+</html>
