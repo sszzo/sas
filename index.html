@@ -64,7 +64,7 @@
         </p>
     </div>
 
-    <button id="install-btn" class="btn mt-8 bg-gray-500 hover:bg-gray-600 text-white" style="display: none;">
+    <button id="install-btn" class="btn mt-8 bg-gray-500 hover:bg-gray-600 text-white">
         <i class="fas fa-download mr-2"></i> تثبيت التطبيق
     </button>
     <div id="install-message" class="mt-4 text-center"></div>
@@ -75,57 +75,54 @@
         const installBtn = document.getElementById('install-btn');
         const installMessage = document.getElementById('install-message');
         const rememberMeCheckbox = document.getElementById('rememberMe');
+        let deferredPrompt;
 
         // Check on page load
         document.addEventListener('DOMContentLoaded', () => {
             const rememberedChoice = localStorage.getItem('rememberedChoice');
             if (rememberedChoice) {
-                // Redirect user directly if a choice is remembered
                 redirectTo(rememberedChoice);
             }
         });
 
-        // Handle PWA installation logic
-        let deferredPrompt;
+        // Event listener for "beforeinstallprompt"
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            installBtn.style.display = 'block';
+            installMessage.textContent = "اضغط على الزر لتثبيت التطبيق على جهازك.";
+            installMessage.className = 'mt-4 text-center text-gray-300';
         });
 
-        installBtn.addEventListener('click', async () => {
-            installBtn.style.display = 'none';
+        // Event listener for the "Install" button click
+        installBtn.addEventListener('click', () => {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                console.log(`User response to the install prompt: ${outcome}`);
-                deferredPrompt = null;
+            } else if (window.matchMedia('(display-mode: standalone)').matches) {
+                installMessage.textContent = "التطبيق مثبت بالفعل على جهازك.";
+                installMessage.className = 'mt-4 text-center text-accent-green';
+            } else {
+                installMessage.textContent = "متصفحك لا يدعم تثبيت التطبيقات. استخدم متصفح Chrome أو Firefox.";
+                installMessage.className = 'mt-4 text-center text-red-500';
             }
         });
 
+        // Event listener for "appinstalled"
         window.addEventListener('appinstalled', () => {
-            installBtn.style.display = 'none';
-            installMessage.textContent = "التطبيق مثبت بهاتفك.";
-            installMessage.classList.add('text-accent-green');
+            installMessage.textContent = "تم تثبيت التطبيق بنجاح!";
+            installMessage.className = 'mt-4 text-center text-accent-green';
         });
-
-        if (!('BeforeInstallPromptEvent' in window)) {
-            installBtn.style.display = 'none';
-            installMessage.textContent = "لتثبيت التطبيق، يجب فتح الموقع بمتصفح يدعم تطبيقات الويب التقدمية (مثل Chrome).";
-            installMessage.classList.add('text-red-500');
-        }
 
         // Register the Service Worker
         if ('serviceWorker' in navigator) {
-          window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sas/service-worker.js')
-              .then(registration => {
-                console.log('Service Worker registered with scope:', registration.scope);
-              })
-              .catch(error => {
-                console.error('Service Worker registration failed:', error);
-              });
-          });
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sas/service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registered with scope:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('Service Worker registration failed:', error);
+                    });
+            });
         }
 
         function selectService(service) {
