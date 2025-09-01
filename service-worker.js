@@ -1,5 +1,5 @@
 const CACHE_NAME = 'my-pwa-cache-v1';
-const urlsToCache = [
+const FILES_TO_CACHE = [
   '/sas/',
   '/index.html',
   '/manifest.json',
@@ -14,21 +14,21 @@ const urlsToCache = [
   'https://raw.githubusercontent.com/sszzo/sas/refs/heads/main/img/512.png'
 ];
 
-self.addEventListener('install', function(event) {
+self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(function(cache) {
-        console.log('[ServiceWorker] Pre-caching offline page');
+      .then((cache) => {
+        console.log('[ServiceWorker] Pre-caching offline pages');
         return cache.addAll(FILES_TO_CACHE);
       })
   );
 });
 
-self.addEventListener('activate', function(event) {
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(function(cacheNames) {
+    caches.keys().then((cacheNames) => {
       return Promise.all(
-        cacheNames.map(function(cacheName) {
+        cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
             console.log('[ServiceWorker] Removing old cache', cacheName);
             return caches.delete(cacheName);
@@ -40,45 +40,32 @@ self.addEventListener('activate', function(event) {
   self.clients.claim();
 });
 
-self.addEventListener('fetch', function(event) {
+self.addEventListener('fetch', (event) => {
   if (event.request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request)
-        .catch(() => {
-          return caches.open(CACHE_NAME)
-            .then((cache) => {
-              return cache.match('index.html'); // عرض الصفحة الرئيسية من ذاكرة التخزين المؤقت عند عدم الاتصال
-            });
-        })
+      fetch(event.request).catch(() => {
+        return caches.open(CACHE_NAME).then((cache) => {
+          return cache.match('index.html');
+        });
+      })
     );
   } else {
     event.respondWith(
-      caches.match(event.request)
-        .then(function(response) {
-          // الكائن المستجيب موجود في ذاكرة التخزين المؤقت - قم بإرجاعه.
-          if (response) {
+      caches.match(event.request).then((response) => {
+        if (response) {
+          return response;
+        }
+        return fetch(event.request).then((response) => {
+          if (!response || response.status !== 200 || response.type !== 'basic') {
             return response;
           }
-
-          // لم يتم العثور على الكائن المستجيب في ذاكرة التخزين المؤقت - قم بجلب مورد جديد من الشبكة.
-          return fetch(event.request).then(
-            function(response) {
-              if (!response || response.status !== 200 || response.type !== 'basic') {
-                return response;
-              }
-
-              // الكائن المستجيب صالح - قم بتخزينه مؤقتًا وإرجاعه.
-              var responseToCache = response.clone();
-
-              caches.open(CACHE_NAME)
-                .then(function(cache) {
-                  cache.put(event.request, responseToCache);
-                });
-
-              return response;
-            }
-          );
-        })
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+          return response;
+        });
+      })
     );
   }
 });
