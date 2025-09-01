@@ -36,7 +36,7 @@
             transform: scale(1.05);
         }
     </style>
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/sas/manifest.json">
 </head>
 <body class="bg-gray-900 text-text-light min-h-screen flex flex-col items-center justify-center p-6">
 
@@ -118,7 +118,7 @@
         // Register the Service Worker
         if ('serviceWorker' in navigator) {
           window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/service-worker.js')
+            navigator.serviceWorker.register('/sas/service-worker.js')
               .then(registration => {
                 console.log('Service Worker registered with scope:', registration.scope);
               })
