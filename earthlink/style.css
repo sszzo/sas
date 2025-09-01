@@ -1,0 +1,363 @@
+/* CSS Variables for Theming */
+:root {
+  --primary-color: #2c6e49;
+  --primary-hover-color: #1b4d36;
+  --secondary-color: #6c757d;
+  --secondary-hover-color: #5a6268;
+  --danger-color: #c62828;
+  --background-color: #f0f2f5;
+  --container-bg-color: #ffffff;
+  --text-color: #333;
+  --label-color: #555;
+  --border-color: #ced4da;
+  --input-bg-color: #fff;
+  --card-bg: linear-gradient(135deg, #f0f4f7, #ffffff);
+  --card-border-color: #d3e0ea;
+  --card-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+  --note-bg-color: #fffde7;
+  --note-border-color: #ffeb3b;
+  --debt-bg-color: #fde8e8;
+  --debt-border-color: #f2c6c6;
+  --debt-text-color: #c62828;
+  --font-family: 'Almarai', sans-serif;
+}
+
+/* Dark Mode Theme */
+body.dark-mode {
+  --primary-color: #4caf50;
+  --primary-hover-color: #66bb6a;
+  --secondary-color: #78909c;
+  --secondary-hover-color: #90a4ae;
+  --danger-color: #ef5350;
+  --background-color: #121212;
+  --container-bg-color: #1e1e1e;
+  --text-color: #e0e0e0;
+  --label-color: #bdbdbd;
+  --border-color: #424242;
+  --input-bg-color: #2c2c2c;
+  --card-bg: linear-gradient(135deg, #2a2a2a, #1e1e1e);
+  --card-border-color: #424242;
+  --card-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  --note-bg-color: #3e3c32;
+  --note-border-color: #6d621b;
+  --debt-bg-color: #4d2e2e;
+  --debt-border-color: #8b4c4c;
+  --debt-text-color: #ef9a9a;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  margin: 0;
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.container, .card {
+  background-color: var(--container-bg-color);
+  padding:  30px;
+  border-radius: 15px;
+  box-shadow: var(--card-shadow);
+  width: 45%;
+  min-width: 300px;
+  margin-left: 0;
+  margin-right: 0;
+  transition: background-color 0.3s;
+}
+
+h2, .main-title {
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--primary-color);
+  font-weight: 700;
+  font-size: 24px;
+}
+label {
+  display: block;
+  margin-top: 15px;
+  color: var(--label-color);
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+input, textarea, select {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  font-family: var(--font-family);
+  font-size: 16px;
+  box-sizing: border-box;
+  background-color: var(--input-bg-color);
+  color: var(--text-color);
+  transition: border-color 0.3s, background-color 0.3s;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border-color);
+  margin-top: 20px;
+  padding: -1px 25px;
+  border-radius: 20px;
+  box-shadow: var(--card-shadow);
+  max-width: 500px;
+}
+
+.card h3 {
+  text-align: center;
+  color: var(--primary-color);
+  margin-bottom: 20px;
+  margin-top: 0px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.tab-buttons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+  width: 90%;
+  max-width: 500px;
+  background-color: var(--container-bg-color);
+  padding: 5px;
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  margin-left: auto;
+  margin-right: auto;
+}
+.tab-buttons button {
+  background-color: transparent;
+  border: none;
+  color: var(--label-color);
+  padding: 10px 20px;
+  margin: 0 5px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--font-family);
+  flex: 1;
+  transition: background-color 0.3s, color 0.3s;
+}
+.tab-buttons button.active-tab {
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: 700;
+}
+
+.card-item, .payment-card-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 12px 15px;
+  border-radius: 12px;
+  background-color: var(--container-bg-color);
+  border: 1px solid var(--border-color);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card-item:hover, .payment-card-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+.card-item .label, .payment-card-item .label {
+  display: flex;
+  align-items: center;
+  color: var(--label-color);
+  font-weight: bold;
+  font-size: 15px;
+}
+.card-item i, .payment-card-item i {
+  color: var(--primary-color);
+  font-size: 18px;
+  margin-left: 10px;
+}
+.card-item p, .payment-card-item p {
+  font-size: 15px;
+  color: var(--text-color);
+  margin: 0;
+  text-align: left;
+  font-weight: 700;
+}
+.card-item.debt-item, .payment-card-item.debt-item {
+  background-color: var(--debt-bg-color);
+  border-color: var(--debt-border-color);
+ 
+}
+.card-item.debt-item .label, .card-item.debt-item .label i, .card-item.debt-item p {
+  color: var(--debt-text-color);
+}
+.payment-card-item .red-text {
+  color: var(--danger-color);
+}
+.note {
+  text-align: center;
+   
+   
+  font-size: 13px;
+  color: var(--text-color);
+  background-color: var(--note-bg-color);
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--note-border-color);
+}
+.date-inputs {
+  display: flex;
+  gap: 10px;
+}
+.date-inputs input {
+  width: 50%;
+  box-sizing: border-box;
+}
+
+.btn-primary, .btn-secondary, .link-btn {
+  margin-top: 20px;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-family: var(--font-family);
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+.btn-primary:hover:not(:disabled) { background-color: var(--primary-hover-color); }
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  color: white;
+}
+.btn-secondary:hover { background-color: var(--secondary-hover-color); }
+
+.btn-primary:disabled {
+  background-color: var(--primary-color);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.btn-primary:active, .btn-secondary:active {
+  transform: scale(0.98);
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
+  max-width: 500px;
+  padding: 0 10px;
+  margin: 20px auto;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.theme-btn, .logout-btn {
+  background: none;
+  border: none;
+  color: var(--label-color);
+  font-size: 22px;
+  cursor: pointer;
+  padding: 5px;
+  margin: 0;
+  transition: color 0.3s;
+}
+.theme-btn:hover, .logout-btn:hover {
+  color: var(--primary-color);
+}
+.logout-btn { color: var(--danger-color); }
+.logout-btn:hover { color: #e57373; }
+
+.d-none { display: none !important; }
+
+/* Toast */
+#toast-container {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.toast {
+  padding: 12px 20px;
+  border-radius: 8px;
+  color: white;
+  font-size: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  transform: translateY(-20px);
+}
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.toast.success { background-color: #2e7d32; }
+.toast.error { background-color: #c62828; }
+.toast.info { background-color: #0277bd; }
+
+/* Buttons & special */
+.error-message {
+  background-color: var(--debt-bg-color);
+  color: var(--debt-text-color);
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 15px;
+  display: none;
+}
+.single-button-container {
+  display: flex;
+  justify-content: center;
+  width: 45%;
+  min-width: 300px;
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  display: none;
+}
+.single-button-container button {
+  background-color: #2c6e49;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 100%;
+}
+.single-button-container button:hover {
+  background-color: #1b4d36;
+}
+
+.footer-credit {
+  text-align: center;
+  color: var(--label-color);
+  font-size: 14px;
+  margin-top: 40px;
+}
+.footer-credit a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: bold;
+}
