@@ -4,9 +4,14 @@ const urlsToCache = [
   '/index.html',
   '/manifest.json',
   '/earthlink/index.html',
+  '/earthlink/script.js',
+  '/earthlink/style.css',
   '/radius/index.html',
-  '/img/192.png',
-  '/img/512.png'
+  '/radius/1.js',
+  '/radius/2.js',
+  '/radius/style.css',
+  'https://raw.githubusercontent.com/sszzo/sas/refs/heads/main/img/192.png',
+  'https://raw.githubusercontent.com/sszzo/sas/refs/heads/main/img/512.png'
 ];
 
 self.addEventListener('install', event => {
