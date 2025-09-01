@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختر الخدمة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-dark': '#1e293b',
+                        'secondary-dark': '#334155',
+                        'accent-green': '#22c55e',
+                        'accent-blue': '#3b82f6',
+                        'text-light': '#e2e8f0',
+                        'border-dark': '#475569',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Adjust button size and border-radius */
+        .btn {
+            padding: 1.25rem 2.5rem;
+            font-size: 1.125rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            transform-origin: center;
+            border-radius: 0.50rem;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+        }
+    </style>
+    <link rel="manifest" href="/manifest.json">
+</head>
+<body class="bg-gray-900 text-text-light min-h-screen flex flex-col items-center justify-center p-6">
+
+    <div class="bg-primary-dark p-10 rounded-2xl shadow-2xl w-full max-w-lg text-center border-2 border-border-dark">
+        <h1 class="text-3xl sm:text-4xl font-extrabold mb-8 text-white">اختر الخدمة</h1>
+        
+        <div class="flex flex-col sm:flex-row gap-6 mb-8">
+            <button class="btn flex-1 bg-accent-green hover:bg-green-600 text-white" onclick="selectService('earthlink')">
+                <i class="fas fa-link mr-2"></i> Earthlink
+            </button>
+            <button class="btn flex-1 bg-accent-blue hover:bg-blue-600 text-white" onclick="selectService('sas')">
+                <i class="fas fa-link mr-2"></i> SAS Radius
+            </button>
+        </div>
+
+        <div class="flex items-center justify-center gap-2 text-sm sm:text-base">
+            <input type="checkbox" id="rememberMe" class="form-checkbox h-5 w-5 text-accent-green rounded focus:ring-accent-green cursor-pointer">
+            <label for="rememberMe" class="text-text-light cursor-pointer">تذكرني</label>
+        </div>
+    </div>
+    
+    <div class="mt-8 p-4 w-full max-w-lg text-center bg-secondary-dark rounded-xl shadow-lg border border-border-dark">
+        <p class="text-sm text-gray-400">
+            ملاحظة: جميع أكواد الموقع مبرمجة فرونت اند، بياناتك لا يتم حفظها على سيرفرات المطور.
+        </p>
+    </div>
+
+    <button id="install-btn" class="btn mt-8 bg-gray-500 hover:bg-gray-600 text-white hidden">
+        <i class="fas fa-download mr-2"></i> تثبيت التطبيق
+    </button>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <script>
+        let deferredPrompt;
+        const installBtn = document.getElementById('install-btn');
+        const rememberMeCheckbox = document.getElementById('rememberMe');
+
+        // Check on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const rememberedChoice = localStorage.getItem('rememberedChoice');
+            if (rememberedChoice) {
+                // Redirect user directly if a choice is remembered
+                redirectTo(rememberedChoice);
+            }
+        });
+
+        // Event listener for "beforeinstallprompt"
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent the mini-infobar from appearing on mobile
+            e.preventDefault();
+            // Stash the event so it can be triggered later.
+            deferredPrompt = e;
+            // Show the install button
+            installBtn.style.display = 'block';
+        });
+
+        // Event listener for the "Install" button click
+        installBtn.addEventListener('click', async () => {
+            // Hide the button
+            installBtn.style.display = 'none';
+            // Show the install prompt
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                // Wait for the user to respond to the prompt
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to the install prompt: ${outcome}`);
+                // Clear the deferredPrompt variable
+                deferredPrompt = null;
+            }
+        });
+
+        // Event listener for "appinstalled"
+        window.addEventListener('appinstalled', () => {
+            // Hide the button when the app is successfully installed
+            installBtn.style.display = 'none';
+        });
+
+        // Register the Service Worker
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js')
+              .then(registration => {
+                console.log('Service Worker registered with scope:', registration.scope);
+              })
+              .catch(error => {
+                console.error('Service Worker registration failed:', error);
+              });
+          });
+        }
+
+        function selectService(service) {
+            if (rememberMeCheckbox.checked) {
+                localStorage.setItem('rememberedChoice', service);
+            } else {
+                localStorage.removeItem('rememberedChoice');
+            }
+            redirectTo(service);
+        }
+
+        function redirectTo(service) {
+            if (service === 'earthlink') {
+                window.location.href = './earthlink/index.html';
+            } else if (service === 'sas') {
+                window.location.href = './radius/index.html';
+            }
+        }
+    </script>
+</body>
+</html>
