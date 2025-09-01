@@ -64,15 +64,16 @@
         </p>
     </div>
 
-    <button id="install-btn" class="btn mt-8 bg-gray-500 hover:bg-gray-600 text-white hidden">
+    <button id="install-btn" class="btn mt-8 bg-gray-500 hover:bg-gray-600 text-white" style="display: none;">
         <i class="fas fa-download mr-2"></i> تثبيت التطبيق
     </button>
+    <div id="install-message" class="mt-4 text-center"></div>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
     <script>
-        let deferredPrompt;
         const installBtn = document.getElementById('install-btn');
+        const installMessage = document.getElementById('install-message');
         const rememberMeCheckbox = document.getElementById('rememberMe');
 
         // Check on page load
@@ -84,36 +85,35 @@
             }
         });
 
-        // Event listener for "beforeinstallprompt"
+        // Handle PWA installation logic
+        let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
-            // Prevent the mini-infobar from appearing on mobile
             e.preventDefault();
-            // Stash the event so it can be triggered later.
             deferredPrompt = e;
-            // Show the install button
             installBtn.style.display = 'block';
         });
 
-        // Event listener for the "Install" button click
         installBtn.addEventListener('click', async () => {
-            // Hide the button
             installBtn.style.display = 'none';
-            // Show the install prompt
             if (deferredPrompt) {
                 deferredPrompt.prompt();
-                // Wait for the user to respond to the prompt
                 const { outcome } = await deferredPrompt.userChoice;
                 console.log(`User response to the install prompt: ${outcome}`);
-                // Clear the deferredPrompt variable
                 deferredPrompt = null;
             }
         });
 
-        // Event listener for "appinstalled"
         window.addEventListener('appinstalled', () => {
-            // Hide the button when the app is successfully installed
             installBtn.style.display = 'none';
+            installMessage.textContent = "التطبيق مثبت بهاتفك.";
+            installMessage.classList.add('text-accent-green');
         });
+
+        if (!('BeforeInstallPromptEvent' in window)) {
+            installBtn.style.display = 'none';
+            installMessage.textContent = "لتثبيت التطبيق، يجب فتح الموقع بمتصفح يدعم تطبيقات الويب التقدمية (مثل Chrome).";
+            installMessage.classList.add('text-red-500');
+        }
 
         // Register the Service Worker
         if ('serviceWorker' in navigator) {
