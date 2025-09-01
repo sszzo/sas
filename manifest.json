@@ -1,19 +1,19 @@
 {
-  "name": "اختيار الخدمة",
-  "short_name": "الخدمات",
-  "description": "صفحة لاختيار خدمات Earthlink و SAS Radius",
-  "start_url": "/sas/index.html",
+  "name": "SAS INFO",
+  "short_name": "SAS INFO",
+  "description": "",
+  "start_url": "/sas/",
   "display": "standalone",
   "background_color": "#1e293b",
   "theme_color": "#2c6e49",
   "icons": [
     {
-      "src": "/img/192.png",
+      "src": "https://raw.githubusercontent.com/sszzo/sas/refs/heads/main/img/192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/img/512.png",
+      "src": "https://raw.githubusercontent.com/sszzo/sas/refs/heads/main/img/192.png",
       "sizes": "512x512",
       "type": "image/png"
     }
