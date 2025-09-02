@@ -1,17 +1,17 @@
 const CACHE_NAME = 'my-pwa-cache-v1';
 const FILES_TO_CACHE = [
   '/',
-  '/index.html',
-  '/manifest.json',
-  '/earthlink/index.html',
-  '/earthlink/script.js',
-  '/earthlink/style.css',
-  '/radius/index.html',
-  '/radius/1.js',
-  '/radius/2.js',
-  '/radius/style.css',
-  'https://raw.githubusercontent.com/sszzo/sas/refs/heads/main/img/192.png',
-  'https://raw.githubusercontent.com/sszzo/sas/refs/heads/main/img/512.png'
+  '/sas/index.html',
+  '/sas/manifest.json',
+  '/sas/earthlink/index.html',
+  '/sas/earthlink/script.js',
+  '/sas/earthlink/style.css',
+  '/sas/radius/index.html',
+  '/sas/radius/1.js',
+  '/sas/radius/2.js',
+  '/sas/radius/style.css',
+  '/sas/img/192.png',
+  '/sas/img/512.png'
 ];
 
 self.addEventListener('install', (event) => {
