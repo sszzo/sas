@@ -2,7 +2,7 @@
   "name": "SAS INFO",
   "short_name": "SAS INFO",
   "description": "",
-  "start_url": "/sas/",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#1e293b",
   "theme_color": "#2c6e49",
