@@ -1,6 +1,6 @@
 const CACHE_NAME = 'my-pwa-cache-v1';
 const FILES_TO_CACHE = [
-  '/',
+  '/sas/',
   '/sas/index.html',
   '/sas/manifest.json',
   '/sas/earthlink/index.html',
