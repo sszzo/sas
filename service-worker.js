@@ -1,71 +1,78 @@
-const CACHE_NAME = 'my-pwa-cache-v1';
-const FILES_TO_CACHE = [
-  '/sas/',
-  '/sas/index.html',
-  '/sas/manifest.json',
-  '/sas/earthlink/index.html',
-  '/sas/earthlink/script.js',
-  '/sas/earthlink/style.css',
-  '/sas/radius/index.html',
-  '/sas/radius/1.js',
-  '/sas/radius/2.js',
-  '/sas/radius/style.css',
-  '/sas/img/192.png',
-  '/sas/img/512.png'
-];
+'use strict';
 
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('[ServiceWorker] Pre-caching offline pages');
-        return cache.addAll(FILES_TO_CACHE);
-      })
-  );
+const CACHE_NAME = "offlineCache-v1";
+const OFFLINE_URL = "/sas/index.html";
+
+self.addEventListener("install", () => {
+	const cacheOfflinePage = async () => {
+		const cache = await caches.open(CACHE_NAME);
+		await cache.add(new Request(OFFLINE_URL, {cache: "reload"}));
+	};
+
+	cacheOfflinePage().then(() => {
+		this.skipWaiting();
+	});
 });
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('[ServiceWorker] Removing old cache', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
-  );
-  self.clients.claim();
+self.addEventListener("activate", (event) => {
+	const expectedCaches = [CACHE_NAME];
+
+	event.waitUntil(
+		caches.keys().then(keys => Promise.all(
+			keys.map(key => {
+				if (!expectedCaches.includes(key)) {
+					return caches.delete(key);
+				}
+			})
+		))
+	);
 });
 
-self.addEventListener('fetch', (event) => {
-  if (event.request.mode === 'navigate') {
-    event.respondWith(
-      fetch(event.request).catch(() => {
-        return caches.open(CACHE_NAME).then((cache) => {
-          return cache.match('index.html');
-        });
-      })
-    );
-  } else {
-    event.respondWith(
-      caches.match(event.request).then((response) => {
-        if (response) {
-          return response;
-        }
-        return fetch(event.request).then((response) => {
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
-          }
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
-          return response;
-        });
-      })
-    );
-  }
+self.addEventListener("fetch", (event) => {
+	if (event.request.mode === "navigate") {
+		event.respondWith((async () => {
+			try {
+				const preloadResponse = await event.preloadResponse;
+				if (preloadResponse) return preloadResponse;
+
+				const networkResponse = await fetch(event.request);
+				return networkResponse;
+			} catch (error) {
+				const cachedResponse = await caches.match(OFFLINE_URL);
+				return cachedResponse;
+			}
+		})());
+	}
+});
+
+self.addEventListener('push', function(event) {
+	const pushData = event.data.text();
+	let data, title, body, url, icon;
+	try {
+		data = JSON.parse(pushData);
+		title = data.title;
+		body = data.body;
+		url = data.url;
+		icon = data.icon;
+	} catch(e) {
+		title = "Untitled";
+		body = pushData;
+	}
+	const options = {
+		body: body,
+		data: {url: url},
+		icon: icon
+	};
+
+	event.waitUntil(
+		self.registration.showNotification(title, options)
+	);
+});
+
+self.addEventListener('notificationclick', (e) => {
+	e.notification.close();
+	e.waitUntil(clients.matchAll({ type: 'window' }).then((clientsArr) => {
+		const hadWindowToFocus = clientsArr.some((windowClient) => windowClient.url === e.notification.data.url ? (windowClient.focus(), true) : false);
+		if (!hadWindowToFocus) clients.openWindow(e.notification.data.url).then((windowClient) => windowClient ? windowClient.focus() : null);
+	}));
 });
